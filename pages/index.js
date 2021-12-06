@@ -40,11 +40,15 @@ export default function Home({ allPostsData }) {
               <small className={utilStyles.lightText}>
                 <Date dateString={date} />
               </small>
-          </li>
+            </li>
           ))}
         </ul>
       </section>
-    </Layout>
+
+      <p>・<Link href="/">トップへ戻る</Link></p>
+      <p>・<Link href="/posts/all-posts">投稿一覧ページ</Link></p>
+      <p>・<Link href="/posts/find-by-id">投稿ID検索ページ</Link></p>
+      <p>・<Link href="/posts/create-post">投稿作成ページ</Link></p>
+   </Layout>
   )
 }
-
