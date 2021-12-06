@@ -5,6 +5,7 @@ export const POST = gql`
     post(id: $id) {
       id
       title
+      body
     }
   }
 `;

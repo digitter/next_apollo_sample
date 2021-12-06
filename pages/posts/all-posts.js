@@ -12,19 +12,31 @@ export default function AllPosts() {
 
   return (
     <>
-      <h3>
-        All posts
-      </h3>
-      {
-        data.posts.map((post, index) => {
-          return (
-            <div key={index}>
-              {post.id}: {post.title} {post.body}
-            </div>
-          )
-        })
-      }
-
+      <h3>All posts</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Body</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.posts.map((post, index) => {
+            return (
+              <tr key={index}>
+                <td>
+                  <Link href={{ pathname: '/posts/edit/[id]', query: { id: post.id } }}>
+                    <a>ID: {post.id}</a>
+                  </Link>
+                </td>
+                <td>Title: {post.title}</td>
+                <td>Body: {post.body}</td>
+              </tr>
+            )
+          })}
+        </tbody>
+      </table>
       <p>・<Link href="/">トップへ戻る</Link></p>
       <p>・<Link href="/posts/all-posts">投稿一覧ページ</Link></p>
       <p>・<Link href="/posts/find-by-id">投稿ID検索ページ</Link></p>

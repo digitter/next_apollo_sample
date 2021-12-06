@@ -1,5 +1,5 @@
 import { useMutation } from "@apollo/client";
-import { CREATE_POST } from "../../graphql/mutations/post";
+import { CREATE_POST } from "../../graphql/mutations/createPost";
 import Link from 'next/link'
 
 export default function CreatePost() {
