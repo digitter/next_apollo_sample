@@ -1,17 +1,31 @@
 import { useMutation } from "@apollo/client";
 import { CREATE_POST } from "../../graphql/mutations/post";
+import { POSTS } from "../../graphql/queries/post";
 import Link from 'next/link'
 
 export default function CreatePost() {
   let title, body;
-  const [createPost, { data, loading, error }] = useMutation(CREATE_POST)
+  const [createPost, { data, loading, error }] = useMutation(CREATE_POST);
 
   if (loading) return 'Submitting...';
   if (error) return `Submission error! ${error.message}`;
 
   const handlePostSubmit = event => {
     event.preventDefault();
-    createPost({ variables: { title: title.value, body: body.value } });
+
+    createPost(
+      {
+        variables: { title: title.value, body: body.value },
+        update: (cache, { data: { createPost } }) => {
+          const data = cache.readQuery({ query: POSTS }); // クエリのcacheを読み込み。
+          if (!data) return; // 上記のクエリcacheがなければ return
+          const newData = [ ...data.posts, createPost];
+          // クエリのcacheがあればそこにデータを追加する。
+          cache.updateQuery({ query: POSTS }, () => ({ posts: newData }));
+        }
+      }
+    );
+
     title.value = '';
     body.value = '';
   }
