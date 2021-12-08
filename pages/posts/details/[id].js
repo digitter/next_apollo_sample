@@ -2,15 +2,48 @@ import { useMutation, useQuery } from "@apollo/client";
 import { useRouter } from "next/dist/client/router";
 import Link from "next/link";
 import { DESTROY_POST, UPDATE_POST } from "../../../graphql/mutations/post";
-import { POST } from "../../../graphql/queries/post";
+import { POST, POSTS } from "../../../graphql/queries/post";
 
 export default function EditPost() {
+  let newTitle, newBody;
   const router = useRouter();
   const { query } = router;
-  const { data, loading, error } = useQuery(POST, { variables: { id: query.id } })
-  const [updatePost] = useMutation(UPDATE_POST);
-  const [destroyPost] = useMutation(DESTROY_POST)
-  let newTitle, newBody;
+  const { data, loading, error } = useQuery(POST, { variables: { id: query.id } });
+
+  const [updatePost] = useMutation(
+    UPDATE_POST,
+    {
+      update(cache, { data: { updatePost }}) {
+        const data = cache.readQuery({ query: POSTS });
+        if (!data) return;
+        const { posts } = data;
+
+        posts.forEach(post => {
+          if (post.id === updatePost.id) {
+            post = updatePost
+          }
+        });
+
+        cache.updateQuery({ query: POSTS }, () => ({ posts }));
+        cache.updateQuery(
+          { query: POST, variables: { id: updatePost.id } },
+          () => ({ post: updatePost })
+        );
+      }
+    }
+  );
+
+  const [destroyPost] = useMutation(
+    DESTROY_POST,
+    {
+      update(cache, { data: { destroyPost }}) {
+        const data = cache.readQuery({ query: POSTS });
+        if (!data) return;
+        const posts = data.posts.filter(post => post.id !== destroyPost.id);
+        cache.updateQuery({ query: POSTS }, () => ({ posts }));
+      }
+    }
+  );
 
   const handlePostUpdate = event => {
     event.preventDefault();
