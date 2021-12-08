@@ -26,7 +26,7 @@ export default function AllPosts() {
             return (
               <tr key={index}>
                 <td>
-                  <Link href={{ pathname: '/posts/edit/[id]', query: { id: post.id } }}>
+                  <Link href={{ pathname: '/posts/details/[id]', query: { id: post.id } }}>
                     <a>ID: {post.id}</a>
                   </Link>
                 </td>

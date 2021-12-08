@@ -18,3 +18,13 @@ export const UPDATE_POST = gql`
     }
   }
 `
+
+export const DESTROY_POST = gql`
+  mutation destroyPost($id: ID!) {
+    destroyPost(id: $id) {
+      id
+      title
+      body
+    }
+  }
+`

@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { useRouter } from "next/dist/client/router";
 import Link from "next/link";
-import { UPDATE_POST } from "../../../graphql/mutations/post";
+import { DESTROY_POST, UPDATE_POST } from "../../../graphql/mutations/post";
 import { POST } from "../../../graphql/queries/post";
 
 export default function EditPost() {
@@ -9,13 +9,21 @@ export default function EditPost() {
   const { query } = router;
   const { data, loading, error } = useQuery(POST, { variables: { id: query.id } })
   const [updatePost] = useMutation(UPDATE_POST);
+  const [destroyPost] = useMutation(DESTROY_POST)
   let newTitle, newBody;
 
-  const handlePostSubmit = event => {
+  const handlePostUpdate = event => {
     event.preventDefault();
     updatePost({ variables: { id: query.id, title: newTitle.value, body: newBody.value } });
     newTitle.value = newTitle.value;
     newBody.value = newBody.value;
+  }
+
+  const handlePostDestroy = event => {
+    event.preventDefault();
+    if (!window.confirm("削除してもよい？")) return
+    destroyPost({ variables: { id: query.id } })
+    router.push('/posts/all-posts')
   }
 
   if (loading) return <div>Loading...</div>;
@@ -27,7 +35,7 @@ export default function EditPost() {
 
       <strong>ID: {query.id}</strong>
 
-      <form onSubmit={handlePostSubmit}>
+      <form onSubmit={handlePostUpdate}>
         <input
           placeholder='title'
           defaultValue={data.post.title}
@@ -44,6 +52,8 @@ export default function EditPost() {
           Update Post
         </button>
       </form>
+
+      <button onClick={handlePostDestroy}>Delete Post</button>
 
       <p>・<Link href="/">トップへ戻る</Link></p>
       <p>・<Link href="/posts/all-posts">投稿一覧ページ</Link></p>
